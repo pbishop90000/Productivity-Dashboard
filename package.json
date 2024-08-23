@@ -1,9 +1,13 @@
 {
   "name": "vscode-my-app",
   "version": "1.0.0",
+  "description": "A full-stack application with Node.js backend and front-end.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:backend": "echo \"No build step for backend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,5 +20,13 @@
     "firebase-admin": "^12.3.1",
     "mongoose": "^8.5.3"
   },
-  "description": ""
+  "devDependencies": {
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0",
+    "webpack-dev-server": "^4.0.0",
+    "babel-loader": "^8.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0"
+  }
 }
