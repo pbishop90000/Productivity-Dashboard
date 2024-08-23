@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Personalized Daily Productivity Dashboard</title>
+    <style>
+        /* Registration Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        #registration-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            z-index: 10;
+        }
+
+        #registration-form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        #registration-form h2 {
+            margin-top: 0;
+        }
+
+        #registration-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+
+        #registration-form button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #registration-form button:hover {
+            background-color: #45a049;
+        }
+
+        #switch-to-login {
+            margin-top: 10px;
+            color: #4CAF50;
+            cursor: pointer;
+        }
+
+        #registration-feedback {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="registration-screen">
+        <div id="registration-form">
+            <h2>Register</h2>
+            <input type="text" id="register-username" placeholder="Username">
+            <input type="password" id="register-password" placeholder="Password">
+            <button onclick="register()">Register</button>
+            <div id="registration-feedback"></div>
+            <div id="switch-to-login" onclick="redirectToLogin()">Already have an account? Login</div>
+        </div>
+    </div>
+
+    <!-- Import Firebase App and Auth libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB0wjSiD7vHjcXGKq6UaFIeH-V-JdsdHTQ",
+            authDomain: "productivity-dashboard-6f49e.firebaseapp.com",
+            projectId: "productivity-dashboard-6f49e",
+            storageBucket: "productivity-dashboard-6f49e.appspot.com",
+            messagingSenderId: "486612310372",
+            appId: "1:486612310372:web:37d40c9e27b585a831c271",
+            measurementId: "G-6H3FRMVV2J"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
+
+        // Register Function
+        function register() {
+            const email = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const feedback = document.getElementById('registration-feedback');
+
+            firebase.createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Store username in local storage
+                    localStorage.setItem('username', email);
+                    // Redirect to the main dashboard page
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    feedback.textContent = error.message;
+                });
+        }
+
+        // Redirect to login page
+        function redirectToLogin() {
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

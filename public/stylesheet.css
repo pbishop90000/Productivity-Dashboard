@@ -1,0 +1,377 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 2px -2px gray;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+#welcome-message {
+    font-size: 1.2em;
+}
+
+#date {
+    font-size: 0.9em;
+}
+
+/* Buttons */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#toggle-dark-mode {
+    background-color: #333;
+    color: white;
+}
+
+#toggle-dark-mode:hover {
+    background-color: #555;
+}
+
+#logout-button {
+    background-color: #f44336;
+    color: white;
+}
+
+#logout-button:hover {
+    background-color: #d32f2f;
+}
+
+#add-task,
+#add-event,
+#save-calendar-id,
+#save-notes,
+#schedule-task {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#add-task:hover,
+#add-event:hover,
+#save-calendar-id:hover,
+#save-notes:hover,
+#schedule-task:hover {
+    background-color: #45a049;
+}
+
+#pomodoro-timer button {
+    background-color: #FF5722;
+    color: white;
+}
+
+#pomodoro-timer button:hover {
+    background-color: #E64A19;
+}
+
+#notifications button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#notifications button:hover {
+    background-color: #45a049;
+}
+
+#rewards button {
+    background-color: #FFD700;
+    color: white;
+}
+
+#rewards button:hover {
+    background-color: #FFC107;
+}
+
+#save-notes {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#save-notes:hover {
+    background-color: #45a049;
+}
+
+/* Inputs and Textareas */
+input[type="text"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Main Content */
+main {
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+section {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    margin-top: 0;
+}
+
+/* Tasks Section */
+#tasks {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#tasks h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #4CAF50;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px;
+}
+
+#task-list,
+#completed-task-list,
+#event-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#task-list li,
+#completed-task-list li,
+#event-list li {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#task-list li.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* Priority Color Coding */
+#task-list li.low-priority {
+    background-color: #d9fdd9;
+}
+
+#task-list li.medium-priority {
+    background-color: #fff9c4;
+}
+
+#task-list li.high-priority {
+    background-color: #ffcdd2;
+}
+
+/* Progress Bar */
+#progress-bar {
+    height: 30px;
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+#progress-bar div {
+    height: 100%;
+    width: 0;
+    background-color: #4CAF50;
+    text-align: center;
+    color: white;
+    line-height: 30px;
+    transition: width 0.3s;
+}
+
+/* Pomodoro Timer */
+#pomodoro-timer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#pomodoro-timer input {
+    width: 50px;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+#pomodoro-feedback {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Notes */
+#quick-notes textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+#note-input {
+    width: 100%;
+    height: 200px; /* Adjust the height as needed */
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+    padding: 10px;
+    font-size: 16px; /* Adjust the font size if needed */
+    border: 1px solid #ccc; /* Optional border style */
+    border-radius: 4px; /* Optional rounded corners */
+}
+
+#note-feedback {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Task Scheduling */
+#task-scheduler {
+    margin-top: 20px;
+}
+
+#task-scheduler input[type="datetime-local"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: calc(100% - 20px);
+    border-radius: 3px;
+    border: 1px solid #ddd;
+}
+
+#schedule-feedback {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Notifications */
+#notification-feedback {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Rewards System */
+#rewards {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#reward-points {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+#reward-feedback {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode header {
+    background-color: #1e1e1e;
+}
+
+body.dark-mode section {
+    background: #1e1e1e;
+}
+
+body.dark-mode #task-list li {
+    background: #333;
+    color: #e0e0e0;
+}
+
+body.dark-mode #progress-bar {
+    background-color: #333;
+}
+
+body.dark-mode #progress-bar div {
+    background-color: #4CAF50;
+}
+
+body.dark-mode footer {
+    background-color: #333;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    section {
+        width: 100%;
+    }
+}
+
+#tasks-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#to-do-tasks,
+#completed-tasks {
+    width: 48%;
+}
+
+#search {
+    margin-top: 20px;
+}
+
+#search input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}

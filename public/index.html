@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Daily Productivity Dashboard</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+    <header>
+        <h1>Personalized Daily Productivity Dashboard</h1>
+        <div id="welcome-message">Welcome, <span id="username"></span>!</div>
+        <div id="date"></div>
+        <button id="toggle-dark-mode" onclick="toggleDarkMode()">Dark Mode</button>
+        <button id="logout-button" onclick="logout()">Logout</button>
+    </header>
+
+    <main>
+        <section id="tasks">
+            <h2>Tasks</h2>
+            <div id="tasks-container">
+                <div id="to-do-tasks">
+                    <h3>To Do Tasks</h3>
+                    <input type="text" id="task-input" placeholder="Enter a new task">
+                    <input type="date" id="due-date-input">
+                    <select id="priority-select">
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                    <select id="task-type-select">
+                        <option value="work">Work</option>
+                        <option value="school">School</option>
+                        <option value="personal">Personal</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="text" id="custom-task-type-input" placeholder="Custom Task Type" style="display: none;">
+                    <button id="add-task" onclick="addTask()">Add Task</button>
+                    <ul id="task-list"></ul>
+                </div>
+
+                <div id="completed-tasks">
+                    <h3>Completed Tasks</h3>
+                    <ul id="completed-task-list"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="progress">
+            <h2>Progress Tracker</h2>
+            <div id="progress-bar">
+                <div id="progress-bar-inner">0%</div>
+            </div>
+            <div id="stats">
+                <p>Total Tasks: <span id="total-tasks">0</span></p>
+                <p>Completed Tasks: <span id="completed-tasks-count">0</span></p>
+                <p>Progress: <span id="progress-percentage">0%</span></p>
+            </div>
+        </section>
+
+        <section id="pomodoro-timer">
+            <h2>Pomodoro Timer</h2>
+            <input type="number" id="pomodoro-duration" placeholder="Duration (minutes)" min="1" value="25">
+            <button onclick="startPomodoro()">Start</button>
+            <button onclick="stopPomodoro()">Stop</button>
+            <div id="pomodoro-feedback"></div>
+        </section>
+
+        <section id="calendar">
+            <h2>Google Calendar Integration</h2>
+            <input type="text" id="calendar-id" placeholder="Enter Calendar ID">
+            <input type="text" id="event-title" placeholder="Event Title">
+            <button id="save-calendar-id" onclick="saveCalendarId()">Save Calendar ID</button>
+            <button id="add-event" onclick="addEvent()">Add Event</button>
+            <div id="reminder-feedback"></div>
+            <h3>Upcoming Events</h3>
+            <ul id="event-list"></ul>
+        </section>
+
+        <section id="notes">
+            <h2>Quick Notes</h2>
+            <textarea id="note-input" placeholder="Write your notes here..."></textarea>
+            <button id="save-notes" onclick="saveNotes()">Save Notes</button>
+            <div id="note-feedback"></div>
+        </section>
+
+        <section id="search">
+            <h2>Search Tasks</h2>
+            <input type="text" id="search-bar" placeholder="Search tasks...">
+        </section>
+
+        <section id="gamification">
+            <h2>Gamification</h2>
+            <div id="daily-tip">Today's Tip: Stay productive!</div>
+        </section>
+
+        <section id="task-scheduler">
+            <h2>Schedule Tasks</h2>
+            <select id="task-dropdown">
+                <option value="">Select a Task</option>
+            </select>
+            <input type="datetime-local" id="task-schedule-time">
+            <button id="schedule-task" onclick="scheduleTask()">Schedule Task</button>
+            <div id="schedule-feedback"></div>
+        </section>
+
+        <section id="notifications">
+            <h2>Notifications</h2>
+            <button id="enable-notifications" onclick="enableNotifications()">Enable Notifications</button>
+            <div id="notification-feedback"></div>
+        </section>
+
+        <section id="rewards">
+            <h2>Rewards</h2>
+            <p id="reward-points">Reward Points: 0</p>
+            <button onclick="redeemReward()">Redeem Reward</button>
+            <div id="reward-feedback"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Productivity Dashboard</p>
+        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB0wjSiD7vHjcXGKq6UaFIeH-V-JdsdHTQ",
+            authDomain: "productivity-dashboard-6f49e.firebaseapp.com",
+            projectId: "productivity-dashboard-6f49e",
+            storageBucket: "productivity-dashboard-6f49e.appspot.com",
+            messagingSenderId: "486612310372",
+            appId: "1:486612310372:web:37d40c9e27b585a831c271",
+            measurementId: "G-6H3FRMVV2J"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Firebase Authentication
+        const auth = firebase.auth();
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out: ', error);
+            });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        let rewardPoints = 0;
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        function addTask() {
+            const taskInput = document.getElementById('task-input');
+            const taskList = document.getElementById('task-list');
+            const prioritySelect = document.getElementById('priority-select');
+            const taskTypeSelect = document.getElementById('task-type-select');
+            const taskDropdown = document.getElementById('task-dropdown');
+
+            if (taskInput.value.trim() !== '') {
+                const priority = prioritySelect.value;
+                const taskType = taskTypeSelect.value;
+                const taskItem = document.createElement('li');
+                taskItem.className = `task-item ${priority}-priority`;
+                taskItem.innerHTML = `
+                    <span>${taskInput.value} (${taskType})</span>
+                    <button onclick="markTaskCompleted(this)">Complete</button>
+                    <button onclick="deleteTask(this)">Delete</button>
+                `;
+                taskList.appendChild(taskItem);
+
+                // Update task dropdown
+                const option = document.createElement('option');
+                option.value = taskInput.value;
+                option.textContent = taskInput.value;
+                taskDropdown.appendChild(option);
+
+                taskInput.value = '';
+                totalTasks++;
+                updateProgress();
+            }
+        }
+
+        function markTaskCompleted(button) {
+            const completedTaskList = document.getElementById('completed-task-list');
+            const taskItem = button.parentElement;
+
+            // Remove buttons
+            taskItem.querySelector('button:nth-of-type(1)').remove();
+            taskItem.querySelector('button:nth-of-type(1)').remove();
+
+            // Move task item to completed tasks
+            completedTaskList.appendChild(taskItem);
+
+            // Update reward points
+            rewardPoints += 10;
+            completedTasks++;
+            document.getElementById('reward-points').textContent = `Reward Points: ${rewardPoints}`;
+
+            updateProgress();
+        }
+
+        function deleteTask(button) {
+            button.parentElement.remove();
+            totalTasks--;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progressPercentage = Math.round((completedTasks / totalTasks) * 100) || 0;
+            document.getElementById('progress-bar-inner').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-bar-inner').textContent = `${progressPercentage}%`;
+            document.getElementById('total-tasks').textContent = totalTasks;
+            document.getElementById('completed-tasks-count').textContent = completedTasks;
+            document.getElementById('progress-percentage').textContent = `${progressPercentage}%`;
+        }
+
+        function startPomodoro() {
+            const duration = document.getElementById('pomodoro-duration').value;
+            document.getElementById('pomodoro-feedback').textContent = `Pomodoro started for ${duration} minutes!`;
+            // Implement Pomodoro Timer logic
+        }
+
+        function stopPomodoro() {
+            document.getElementById('pomodoro-feedback').textContent = 'Pomodoro stopped.';
+            // Implement Pomodoro Timer stop logic
+        }
+
+        function saveCalendarId() {
+            const calendarId = document.getElementById('calendar-id').value;
+            localStorage.setItem('calendarId', calendarId);
+            document.getElementById('reminder-feedback').textContent = 'Calendar ID saved.';
+        }
+
+        function addEvent() {
+            const calendarId = localStorage.getItem('calendarId');
+            const eventTitle = document.getElementById('event-title').value;
+
+            if (calendarId && eventTitle) {
+                const event = {
+                    summary: eventTitle,
+                    start: {
+                        dateTime: new Date().toISOString(),
+                        timeZone: 'America/Los_Angeles',
+                    },
+                    end: {
+                        dateTime: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(), // 1 hour later
+                        timeZone: 'America/Los_Angeles',
+                    },
+                };
+
+                gapi.load('client:auth2', initClient);
+
+                function initClient() {
+                    gapi.client.init({
+                        apiKey: 'AIzaSyB0wjSiD7vHjcXGKq6UaFIeH-V-JdsdHTQ',  // Your API key
+                        clientId: '691248639869-aahmkekaipl76tcrbub4n2do1rq6kghi.apps.googleusercontent.com',  // Your client ID
+                        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+                        scope: 'https://www.googleapis.com/auth/calendar',
+                    }).then(() => {
+                        gapi.auth2.getAuthInstance().signIn().then(() => {
+                            gapi.client.calendar.events.insert({
+                                calendarId: calendarId,
+                                resource: event
+                            }).then(response => {
+                                document.getElementById('reminder-feedback').textContent = `Event added: ${response.result.summary}`;
+                            });
+                        });
+                    });
+                }
+            } else {
+                document.getElementById('reminder-feedback').textContent = 'Please provide a calendar ID and event title.';
+            }
+        }
+
+        function saveNotes() {
+            const noteInput = document.getElementById('note-input').value;
+            localStorage.setItem('quickNotes', noteInput);
+            document.getElementById('note-feedback').textContent = 'Notes saved!';
+        }
+
+        function loadNotes() {
+            const savedNotes = localStorage.getItem('quickNotes');
+            if (savedNotes) {
+                document.getElementById('note-input').value = savedNotes;
+            }
+        }
+
+        function scheduleTask() {
+            const taskInput = document.getElementById('task-dropdown').value;
+            const scheduleTime = document.getElementById('task-schedule-time').value;
+
+            if (taskInput && scheduleTime) {
+                const taskItem = document.createElement('li');
+                taskItem.innerHTML = `
+                    <span>${taskInput} - Scheduled for ${new Date(scheduleTime).toLocaleString()}</span>
+                    <button onclick="markTaskCompleted(this)">Complete</button>
+                    <button onclick="deleteTask(this)">Delete</button>
+                `;
+                document.getElementById('task-list').appendChild(taskItem);
+
+                setTimeout(() => {
+                    alert(`Time to complete your task: ${taskInput}`);
+                }, new Date(scheduleTime) - new Date());
+
+                document.getElementById('schedule-feedback').textContent = 'Task scheduled successfully!';
+            } else {
+                document.getElementById('schedule-feedback').textContent = 'Please select a task and time.';
+            }
+        }
+
+        function enableNotifications() {
+            if (Notification.permission === 'granted') {
+                document.getElementById('notification-feedback').textContent = 'Notifications are already enabled.';
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        document.getElementById('notification-feedback').textContent = 'Notifications enabled!';
+                    }
+                });
+            } else {
+                document.getElementById('notification-feedback').textContent = 'Notifications are blocked. Please enable them in your browser settings.';
+            }
+        }
+
+        function redeemReward() {
+            if (rewardPoints >= 50) {
+                rewardPoints -= 50;
+                document.getElementById('reward-points').textContent = `Reward Points: ${rewardPoints}`;
+                document.getElementById('reward-feedback').textContent = 'You redeemed a reward!';
+            } else {
+                document.getElementById('reward-feedback').textContent = 'Not enough points to redeem a reward.';
+            }
+        }
+
+        function loadUpcomingEvents() {
+            const upcomingEvents = JSON.parse(localStorage.getItem('upcomingEvents')) || [];
+            const eventList = document.getElementById('event-list');
+            eventList.innerHTML = '';
+            upcomingEvents.forEach(event => {
+                const eventItem = document.createElement('li');
+                eventItem.textContent = `${event.title} on ${event.date}`;
+                eventList.appendChild(eventItem);
+            });
+        }
+
+        function searchTasks() {
+            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+            const taskItems = document.querySelectorAll('#task-list li');
+            taskItems.forEach(item => {
+                const taskText = item.querySelector('span').textContent.toLowerCase();
+                if (taskText.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotes();
+            loadUpcomingEvents();
+            const username = localStorage.getItem('username');
+            document.getElementById('username').textContent = username || 'User';
+            const today = new Date().toDateString();
+            document.getElementById('date').textContent = today;
+            document.getElementById('reward-points').textContent = `Reward Points: ${rewardPoints}`;
+            
+            document.getElementById('search-bar').addEventListener('input', searchTasks);
+        });
+    </script>
+</body>
+</html>
