@@ -22,14 +22,7 @@
       ]
     }
   ],
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
+  
   "storage": {
     "rules": "storage.rules"
   },
@@ -46,9 +39,7 @@
     "database": {
       "port": 9000
     },
-    "hosting": {
-      "port": 5000
-    },
+    
     "pubsub": {
       "port": 8085
     },
